@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="60" tilewidth="10" tileheight="10" backgroundcolor="#ffffff">
+ <tileset firstgid="1" name="tiles" tilewidth="10" tileheight="10">
+  <tile id="0">
+   <image width="10" height="10" source="tiles_set/chem_sensor.bmp"/>
+  </tile>
+  <tile id="1">
+   <image width="10" height="10" source="tiles_set/chemical.bmp"/>
+  </tile>
+  <tile id="2">
+   <image width="10" height="10" source="tiles_set/department.bmp"/>
+  </tile>
+  <tile id="3">
+   <image width="10" height="10" source="tiles_set/fire.bmp"/>
+  </tile>
+  <tile id="4">
+   <image width="10" height="10" source="tiles_set/fire_manual.bmp"/>
+  </tile>
+  <tile id="5">
+   <image width="10" height="10" source="tiles_set/fire_sensor.bmp"/>
+  </tile>
+  <tile id="6">
+   <image width="10" height="10" source="tiles_set/repository.bmp"/>
+  </tile>
+  <tile id="7">
+   <image width="10" height="10" source="tiles_set/veil.bmp"/>
+  </tile>
+  <tile id="8">
+   <image width="10" height="10" source="tiles_set/veil_working.bmp"/>
+  </tile>
+  <tile id="9">
+   <image width="10" height="10" source="tiles_set/wall.bmp"/>
+  </tile>
+ </tileset>
+ <layer name="Ground" width="100" height="60">
+  <data encoding="base64" compression="zlib">
+   eJztmUEOgzAMBLkh9f8P7hUOVNSs7XWYkXxLvElGCrR8tm37UFb1hKfzM3tmrC0zCx868FHXpyoLHzrwUdenKgsfOvBR16cqCx868FHXpyoLHzrwUdenKgsfOvBR16cqCx868FHXpyoLHzqUPv75RqL4ztLdo6v/3d4rMnFf+PACH1680UfWc2c/VFbG5OfNLx+7aUXOFx/4iIAPL/DhxdU6u88cH2e6zxwfZ7rPXO1jCm95fkxnNR/T/eGjh7fcVyv4cP//SrFPN6as8wg+vMCHF/jwAh9e4MOLrHc/dSnWnbHnrHPs4G7ulY8VwYcX+PACH17gwwt8eDHBh3quM/jwotvHk9+DK9LtIzoOHznZ0XH46AMf/kxc8x0m3Ffquc5M8MF9VZcdHYePnOzoOHzkZEfHre6D8qkvafEoqg==
+  </data>
+ </layer>
+ <layer name="Effects" width="100" height="60" opacity="0.5">
+  <data encoding="base64" compression="zlib">
+   eJztwQENAAAAwqD3T+3sARQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADddwAAB
+  </data>
+ </layer>
+ <layer name="Objects_tiles" width="100" height="60">
+  <data encoding="base64" compression="zlib">
+   eJzt2UsOAiEMAFBdaDL3v7BxN3Gh8p1S3ktcUoEwFMrtBgAAkM9z4Tg9/jPK+I8uvZgXN6rM4y0dW+tcZJ5LAKDcI0iMkfFGxZwRG9jXux7Rcn9rbZ9dr7oRfcxYq8fpBwCMtXu+jTb+0v7cK9ud20c4b0d5K/5UOq9R36qvUDuWjLW7CN8Y32VcdyvJtPexF/UrVuZ8EseoPcS7EwDMM7quoG4B+3Fni8XdKrbV86T1NYZ57SfbXNbk2Ch5ubUfV7cnvprv/Veb1fM0zGavjSfbWSgbeQYA/vMCINEB6Q==
+  </data>
+ </layer>
+ <objectgroup name="Objects" visible="0"/>
+ <layer name="util" width="100" height="60" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztw4ENgCAQBLAHBMX9B+bmIG3SVlU9Rz45c+WbX+78CwAAAAAAAAAAAAAAAAAAAAAAAAAAAADgfgd+BAA4
+  </data>
+ </layer>
+</map>
