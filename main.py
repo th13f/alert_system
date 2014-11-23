@@ -26,6 +26,17 @@ def main():
 
     while 1:  # Основной цикл программы
         for e in pygame.event.get():  # Обрабатываем события
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_f]:
+                interface.mode = interface.FIRE_MODE
+            elif keys[pygame.K_c]:
+                interface.mode = interface.CHEM_MODE
+            elif keys[pygame.K_v]:
+                interface.mode = interface.INACTIVE_MODE
+            if True in mouse.get_pressed():
+                pos = mouse.get_pos()
+                if pos[0] < 1000:
+                    interface.new_object(pos)
             if e.type == QUIT:
                 raise SystemExit("QUIT")
         interface.update()

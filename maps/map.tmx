@@ -44,7 +44,7 @@
  </layer>
  <layer name="Objects_tiles" width="100" height="60">
   <data encoding="base64" compression="zlib">
-   eJzt2UsOAiEMAFBdaDL3v7BxN3Gh8p1S3ktcUoEwFMrtBgAAkM9z4Tg9/jPK+I8uvZgXN6rM4y0dW+tcZJ5LAKDcI0iMkfFGxZwRG9jXux7Rcn9rbZ9dr7oRfcxYq8fpBwCMtXu+jTb+0v7cK9ud20c4b0d5K/5UOq9R36qvUDuWjLW7CN8Y32VcdyvJtPexF/UrVuZ8EseoPcS7EwDMM7quoG4B+3Fni8XdKrbV86T1NYZ57SfbXNbk2Ch5ubUfV7cnvprv/Veb1fM0zGavjSfbWSgbeQYA/vMCINEB6Q==
+   eJzt3NEKwjAMheF5odD3f2EpMvRC1DQnNU3/D7xzWRu3ZU3B4wAAAACAHC7CWLeF46jOqeAdSzu0v+sZqwljeb+jOtcnivlmZZ2bNxeVcwkAAOyuSWJExouKOSM2gH31foRn/eY9vrLeo7D2exT9EWV/qJoZ12p7+QAAgFg719v+zpdt/tbxePciR963I3jHcOZBPRdrXhV71VWMzqVi7y7DPYand+v9itfdSio9+7AX+ldYVZY1AB6iniHsO+XCnhMA1BbdV6BvAeyFNVs+rK1yW71Ocn3FIK86/8plVC9lpMZmqct9HJ68KI5Xs46HHluskfv92zGr12lgtiw1B9r/h0Ec6gwAAL+5AyGvAfg=
   </data>
  </layer>
  <objectgroup name="Objects" visible="0"/>

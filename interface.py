@@ -1,40 +1,17 @@
-"""Module: interface.py
-Overview: The core of the GUI for the A* demo.
-Classes:
-    Interface(object):
-        Methods:
-            __init__(self)
-            make_background(self)
-            reset(self,full=True)
-            setup_barriers(self)
-            render_text(self,specific=None)
-            get_target(self)
-            get_event(self,event)
-            left_button_clicked(self)
-            right_button_clicked(self)
-            hotkeys(self,event)
-            toggle_animate(self)
-            toggle_piece(self,ind=None)
-            add_barriers(self)
-            update(self,Surf)
-            found_solution(self)
-            fill_cell(self,cell,color,Surf)
-            center_number(self,cent,string,color,Surf)
-            draw(self,Surf)
-            draw_solve(self,Surf)
-            draw_start_end_walls(self,Surf)
-            draw_messages(self,Surf)"""
 import pygame
 from pygame.surface import Surface
 from pytmx import load_pygame
-from objects import Department
-import solver
+from objects import Department, Plague, Sensor
 
 
 class Interface(object):
     GROUND_INDEX = 0
     EFFECTS_INDEX = 1
     OBJECTS_INDEX = 2
+
+    FIRE_MODE = 2
+    CHEM_MODE = 1
+    INACTIVE_MODE = 0
 
     def __init__(self, bg_color, display):
         self.animate = False
@@ -45,8 +22,9 @@ class Interface(object):
 
         self.fon = Surface(self.cell_size)
         self.fon.fill(pygame.Color(bg_color))
+        self.bg_color = bg_color
 
-        self.font = pygame.font.SysFont("arial", 13)
+        self.font = pygame.font.SysFont("calibri", 18)
         self.rendered = {}
         self.map = load_pygame("maps/map.tmx")
 
@@ -62,6 +40,12 @@ class Interface(object):
         Interface.WALL_ID = self.map.gidmap[10][0][0]
         Interface.FON_ID = 0
 
+        Interface.FIRE_MSG = "FIRE_ALERT"
+        Interface.CHEM_MSG = "CHEM_ALERT"
+        Interface.NEW_FIRE_MSG = "NEW_FIRE"
+        Interface.NEW_CHEM_MSG = "NEW_CHEM"
+        Interface.NEW_INACTIVE_MSG = "NEW_INACTIVE"
+
         self.ground_layer = self.map.get_layer_by_name("Ground").data
         self.effects_layer = self.map.get_layer_by_name("Effects").data
         self.objects_layer = self.map.get_layer_by_name("Objects_tiles").data
@@ -69,14 +53,27 @@ class Interface(object):
         self.width = self.map.width
         barriers_ids = [Interface.WALL_ID, Interface.VEIL_ID, Interface.SENSOR_CHEM_ID,
                         Interface.SENSOR_FIRE_ID, Interface.SENSOR_MANUAL_ID]
-        fire_barriers_ids = barriers_ids + [Interface.WATER_ID, Interface.DEPARTMENT_ID,
-                                            Interface.FIRE_ID, Interface.CHEM_ID]
+        plague_barriers_ids = barriers_ids + [Interface.WATER_ID, Interface.DEPARTMENT_ID,
+                                              Interface.FIRE_ID, Interface.CHEM_ID]
         self.barriers = self.setup_barriers([self.ground_layer, self.objects_layer],
                                             barriers_ids)
-        self.fire_barriers = self.setup_barriers([self.ground_layer, self.objects_layer, self.effects_layer],
-                                                 fire_barriers_ids)
-        self.department = Department((32, 42), [Interface.FIRE_ID, Interface.CHEM_ID],
+        fire_sensors = self.setup_barriers([self.objects_layer, ], [Interface.SENSOR_FIRE_ID, ])
+        chem_sensors = self.setup_barriers([self.objects_layer, ], [Interface.SENSOR_CHEM_ID, ])
+        self.department = Department((32, 42), Interface.FIRE_ID, Interface.CHEM_ID,
                                      self.objects_layer, self.barriers, Interface.DEPARTMENT_ID)
+        self.fire = Plague([self.objects_layer, self.effects_layer, self.ground_layer], self.objects_layer,
+                           plague_barriers_ids, Interface.FIRE_ID, 20)
+        self.chem = Plague([self.objects_layer, self.effects_layer, self.ground_layer], self.objects_layer,
+                           plague_barriers_ids, Interface.CHEM_ID, 35)
+        self.fire_sensor = Sensor(self.objects_layer, Interface.FIRE_ID, Interface.SENSOR_FIRE_ID, fire_sensors)
+        self.chem_sensor = Sensor(self.objects_layer, Interface.CHEM_ID, Interface.SENSOR_CHEM_ID, chem_sensors)
+        self.text_dict = {
+            self.FIRE_MSG: ["FIRE ALERT!", (1005, 20)],
+            self.CHEM_MSG: ["CHEM ALERT!", (1005, 35)],
+        }
+        self.messages = ['', '']
+        self.mode = self.INACTIVE_MODE
+
 
     def move_object(self, obj, end):
         symbol = obj.symbol
@@ -98,9 +95,40 @@ class Interface(object):
                         if not image:
                             image = self.fon
                 self.image.blit(image, (x * 10, y * 10))
+        self.fire.tick()
+        self.chem.tick()
+        fire = self.fire_sensor.tick()
+        chem = self.chem_sensor.tick()
+        if fire:
+            self.department.fire_timer = 15
+            self.messages[0] = Interface.FIRE_MSG
+        else:
+            if Interface.FIRE_MSG in self.rendered:
+                self.rendered.pop(Interface.FIRE_MSG)
+                self.messages[0] = ''
+        if chem:
+            self.department.chem_timer = 15
+            self.messages[1] = Interface.CHEM_MSG
+        else:
+            if Interface.CHEM_MSG in self.rendered:
+                self.rendered.pop(Interface.CHEM_MSG)
+                self.messages[1] = ''
+
         next = self.department.next()
         if next:
             self.move_object(self.department, next)
+
+        if self.mode == self.INACTIVE_MODE:
+            self.image.blit(self.fon, (1005, 100))
+        elif self.mode == self.FIRE_MODE:
+            self.image.blit(self.map.images[self.FIRE_ID], (1005, 100))
+        elif self.mode == self.CHEM_MODE:
+            self.image.blit(self.map.images[self.CHEM_ID], (1005, 100))
+
+        self.render_text()
+        for text in self.text_dict:
+            if text in self.rendered:
+                self.image.blit(self.rendered[text][0], self.rendered[text][1])
 
 
     def setup_barriers(self, layers, bad_indexes):
@@ -112,109 +140,27 @@ class Interface(object):
                         barriers.add((y, x))
         return barriers
 
-    def render_text(self, specific=None):
-        """Prerender text messages. By default all are rendered. Single messages
-        can be rerendered by passing a key corresponding to the below dictionary."""
 
-        def render_each(specific, text_dict):
-            msg, loc = text_dict[specific]
-            rend = self.font.render(msg, 1, (255, 255, 255))
-            rect = pygame.Rect(rend.get_rect(topleft=loc))
-            self.rendered[specific] = [rend, rect]
+    def render_each(self, specific, text_dict):
+        msg, loc = text_dict[specific]
+        rend = self.font.render(msg, 1, (0, 0, 0))
+        rect = pygame.Rect(rend.get_rect(topleft=loc))
+        self.rendered[specific] = [rend, rect]
 
-        text = {"START": ["Place your start point:", (10, 1)],
-                "GOAL": ["Place your goal:", (10, 1)],
-                "BARRIER": ["Draw your walls or press spacebar to solve:", (10, 1)],
-                "ENTER": ["Press 'Enter' to restart.", (10, 1)],
-                "RESET": ["Press 'i' to reset.", (150, 1)],
-                "ANIM": ["Animation: {}".format(["Off", "On"][self.animate]), (340, 1)],
-                "MOVE": ["Move type: {}".format(self.piece_type.capitalize()), (320, 263)],
-                "TIME": ["Time (ms): {}".format(self.time_end - self.time_start), (100, 263)],
-                "FAILED": ["No solution.", (20, 263)],
-                "SOLVED": ["Steps: {}".format(len(self.solution)), (20, 263)]}
-        if specific:
-            render_each(specific, text)
-        else:
-            for specific in text:
-                render_each(specific, text)
+    def render_text(self):
+        self.image.fill(pygame.Color(self.bg_color), (1000, 0, 100, 100))
+        for msg in self.messages:
+            if msg != '':
+                self.render_each(msg, self.text_dict)
 
-    """def update(self, Surf):
-        #Primary update logic control flow for the GUI.
-        self.add_barriers()
-        if self.mode == "RUN":
-            if not self.Solver:
-                self.time_start = pg.time.get_ticks()
-                self.Solver = solver.Star(self.start_cell, self.goal_cell, self.piece_type, self.barriers)
-            if self.animate:
-                self.Solver.evaluate()
-            else:
-                while not self.Solver.solution:
-                    self.Solver.evaluate()
-            if self.Solver.solution:
-                self.found_solution()
-        if self.mode != "RUN" or self.animate:
-            self.draw(Surf)
-"""
-    def found_solution(self):
-        """Sets appropriate mode when solution is found (or failed)."""
-        self.time_end = pygame.time.get_ticks()
-        if self.Solver.solution == "NO SOLUTION":
-            self.mode = "FAILED"
-        else:
-            self.solution = self.Solver.solution
-            self.mode = "SOLVED"
-            self.render_text("SOLVED")
-        self.render_text("TIME")
+    def make_fire(self, pos):
+        self.fire.new(pos)
 
-    def fill_cell(self, cell, color, Surf):
-        """Fills a single cell given coordinates, color, and a target Surface."""
-        loc = cell[0] * self.cell_size[0], cell[1] * self.cell_size[1]
-        Surf.fill(color, (loc, self.cell_size))
-        return pygame.Rect(loc, self.cell_size)
+    def make_chem(self, pos):
+        self.chem.new(pos)
 
-    def center_number(self, cent, string, color, Surf):
-        """Used for centering numbers on cells."""
-        rend = self.font.render(string, 1, color)
-        rect = pygame.Rect(rend.get_rect(center=cent))
-        rect.move_ip(1, 1)
-        Surf.blit(rend, rect)
-
-    def draw(self, Surf):
-        """Calls draw functions in the appropraite order."""
-        Surf.fill(0)
-        self.draw_solve(Surf)
-        self.draw_start_end_walls(Surf)
-        Surf.blit(self.image, (0, 0))
-        self.draw_messages(Surf)
-
-    def draw_solve(self, Surf):
-        """Draws while solving (if animate is on) and once solved."""
-        if self.mode in ("RUN", "SOLVED", "FAILED"):
-            for cell in self.Solver.closed_set:
-                self.fill_cell(cell, (255, 0, 255), Surf)
-            if self.mode == "SOLVED":
-                for i, cell in enumerate(self.solution):
-                    cent = self.fill_cell(cell, (0, 255, 0), Surf).center
-                    self.center_number(cent, str(len(self.solution) - i), (0, 0, 0), Surf)
-
-    def draw_start_end_walls(self, Surf):
-        """Draw endpoints and barriers."""
-        if self.start_cell:
-            self.fill_cell(self.start_cell, (255, 255, 0), Surf)
-        if self.goal_cell:
-            cent = self.fill_cell(self.goal_cell, (0, 0, 255), Surf).center
-            if self.mode == "SOLVED":
-                self.center_number(cent, str(len(self.solution)), (255, 255, 255), Surf)
-        for cell in self.barriers:
-            self.fill_cell(cell, (255, 255, 255), Surf)
-
-    def draw_messages(self, Surf):
-        """Draws the text (not including cell numbers)."""
-        for key in [self.mode, "MOVE", "ANIM"]:
-            try:
-                Surf.blit(*self.rendered[key])
-            except KeyError:
-                pass
-        if self.mode in ("SOLVED", "FAILED"):
-            for rend in ("TIME", "RESET", "ENTER"):
-                Surf.blit(*self.rendered[rend])
+    def new_object(self, (x, y)):
+        if self.mode == self.FIRE_MODE:
+            self.make_fire((x / 10, y / 10))
+        elif self.mode == self.CHEM_MODE:
+            self.make_chem((x / 10, y / 10))
