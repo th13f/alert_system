@@ -1,7 +1,7 @@
 import pygame
 from pygame.surface import Surface
 from pytmx import load_pygame
-from objects import Department, Plague, Sensor
+from objects import Department, Plague, Sensor, Veil
 
 
 class Interface(object):
@@ -59,12 +59,15 @@ class Interface(object):
                                             barriers_ids)
         fire_sensors = self.setup_barriers([self.objects_layer, ], [Interface.SENSOR_FIRE_ID, ])
         chem_sensors = self.setup_barriers([self.objects_layer, ], [Interface.SENSOR_CHEM_ID, ])
+        veils = self.setup_barriers([self.objects_layer, ], [Interface.VEIL_ID, ])
         self.department = Department((32, 42), Interface.FIRE_ID, Interface.CHEM_ID,
                                      self.objects_layer, self.barriers, Interface.DEPARTMENT_ID)
         self.fire = Plague([self.objects_layer, self.effects_layer, self.ground_layer], self.objects_layer,
                            plague_barriers_ids, Interface.FIRE_ID, 20)
         self.chem = Plague([self.objects_layer, self.effects_layer, self.ground_layer], self.objects_layer,
                            plague_barriers_ids, Interface.CHEM_ID, 35)
+        self.veil = Veil(self.effects_layer, self.objects_layer, self.VEIL_ID, self.WATER_ID, self.FIRE_ID,
+                         veils, self.department)
         self.fire_sensor = Sensor(self.objects_layer, Interface.FIRE_ID, Interface.SENSOR_FIRE_ID, fire_sensors)
         self.chem_sensor = Sensor(self.objects_layer, Interface.CHEM_ID, Interface.SENSOR_CHEM_ID, chem_sensors)
         self.text_dict = {
@@ -99,15 +102,16 @@ class Interface(object):
         self.chem.tick()
         fire = self.fire_sensor.tick()
         chem = self.chem_sensor.tick()
+        self.veil.tick()
         if fire:
-            self.department.fire_timer = 15
+            self.department.fire_timer = 30
             self.messages[0] = Interface.FIRE_MSG
         else:
             if Interface.FIRE_MSG in self.rendered:
                 self.rendered.pop(Interface.FIRE_MSG)
                 self.messages[0] = ''
         if chem:
-            self.department.chem_timer = 15
+            self.department.chem_timer = 30
             self.messages[1] = Interface.CHEM_MSG
         else:
             if Interface.CHEM_MSG in self.rendered:

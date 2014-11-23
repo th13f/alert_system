@@ -39,12 +39,12 @@
  </layer>
  <layer name="Effects" width="100" height="60" opacity="0.5">
   <data encoding="base64" compression="zlib">
-   eJztwQENAAAAwqD3T+3sARQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADddwAAB
+   eJzt2LEJAEAIA0BL95/Y9psvhSB3kAlSBFIFAAAAAAAAAMBF/QQA2GVvs+gjiz4AgB//FQAAAAAAAAAAAJBqAIpSAEk=
   </data>
  </layer>
  <layer name="Objects_tiles" width="100" height="60">
   <data encoding="base64" compression="zlib">
-   eJzt3NEKwjAMheF5odD3f2EpMvRC1DQnNU3/D7xzWRu3ZU3B4wAAAACAHC7CWLeF46jOqeAdSzu0v+sZqwljeb+jOtcnivlmZZ2bNxeVcwkAAOyuSWJExouKOSM2gH31foRn/eY9vrLeo7D2exT9EWV/qJoZ12p7+QAAgFg719v+zpdt/tbxePciR963I3jHcOZBPRdrXhV71VWMzqVi7y7DPYand+v9itfdSio9+7AX+ldYVZY1AB6iniHsO+XCnhMA1BbdV6BvAeyFNVs+rK1yW71Ocn3FIK86/8plVC9lpMZmqct9HJ68KI5Xs46HHluskfv92zGr12lgtiw1B9r/h0Ec6gwAAL+5AyGvAfg=
+   eJzt3EGOwyAMAMDsoZH6/w9XOeRW7W7ADobMnBtDXCqDkbptAAAANfwExtonjhM1ZoTeuby32O/1jPUOjNX7maixfhPxvlVdfbfeXKycSwDguleRGJnxsmLeERtYQ8s5bG98blTcmRw9iqv9nsjezp2xAQC417G3m32/3XsXee63R+eh9473zMPoe+vR41fSuqZW7N1ZF7V8O9evuO5mMroGATxNS8+dPL11sMJ5LsOsa9QdEsAzZfcV9C3gWZzZ6lnxzLWS2euk9ZVDXuOMymVWj6Wlxlapy8c8evIS8Xy0q/PRe8vV8nv/65nZ6zTcrUrNIfb/YcijzgDA/3wALroBrQ==
   </data>
  </layer>
  <objectgroup name="Objects" visible="0"/>

@@ -51,15 +51,16 @@ class Department(object):
         self.path = path
 
     def next(self):
+        if self.chem_timer > 0:
+            self.chem_timer -= 1
+        if self.fire_timer > 0:
+            self.fire_timer -= 1
+
         if self.path:
             return self.path.pop()
         else:
             self.aim()
             return None
-        if self.chem_timer > 0:
-            self.chem_timer -= 1
-        if self.fire_timer > 0:
-            self.fire_timer -= 1
 
 class Plague(object):
     def __init__(self, layers, layer, barriers_ids, symbol, wait_for):
@@ -131,3 +132,42 @@ class Sensor(object):
                     if self.layer[y][x] == self.to_find:
                         return True
         return False
+
+
+class Veil(object):
+    def __init__(self, water_layer, fire_layer, symbol, water_symbol, fire_symbol, veils_array, department):
+        self.symbol = symbol
+        self.water_symbol = water_symbol
+        self.fire_symbol = fire_symbol
+        self.water_layer = water_layer
+        self.fire_layer = fire_layer
+        self.height = len(water_layer)
+        self.width = len(water_layer[0])
+        self.veils = veils_array
+        self.area = 5
+        self.department = department
+        self.working = False
+
+    def make_symbol(self, symbol):
+        for veil in self.veils:
+            for y in xrange(max(0, veil[0]-self.area), min(self.height, veil[0]+self.area)):
+                for x in xrange(max(0, veil[1]-self.area), min(self.width, veil[1]+self.area)):
+                    self.water_layer[y][x] = symbol
+                    if self.fire_layer[y][x] == self.fire_symbol:
+                        self.fire_layer[y][x] = 0
+
+    def work(self):
+        if not self.working:
+            self.make_symbol(self.water_symbol)
+            self.working = True
+
+    def stop(self):
+        if self.working:
+            self.make_symbol(0)
+            self.working = False
+
+    def tick(self):
+        if self.department.chem_timer > 0 or self.department.fire_timer > 0:
+            self.work()
+        else:
+            self.stop()
